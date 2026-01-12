@@ -4,6 +4,12 @@ A web-based application for viewing MRI scans from DICOM (.dcm) files. This appl
 
 ![MRI DICOM Viewer Interface](assets/ui-screenshot.png)
 
+## Why?
+
+**TL;DR**: Wanted to have something simple for macOS.
+
+Finding a simple, open-source MRI viewer for Mac was harder than actually reading the MRI.
+
 ## Features
 
 - 📁 **Single File Upload**: Upload individual DICOM (.dcm) files
@@ -23,6 +29,8 @@ A web-based application for viewing MRI scans from DICOM (.dcm) files. This appl
 - **DICOM Library**: Cornerstone.js for medical image rendering
 - **DICOM Parser**: dicom-parser for DICOM file parsing
 - **Build Tool**: Vite for fast development and optimized builds
+
+**TODO**: Finish PWA support
 
 ## Quick Start
 
