@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MRI DICOM Viewer</title>
+    
+    <!-- PWA & Mobile Optimizations -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MRI Viewer">
+    <meta name="theme-color" content="#00d4ff">
+    
+    <!-- Favicon & Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏥 MRI DICOM Viewer</h1>
+            <p>Upload and view DICOM (.dcm) medical imaging files</p>
+        </header>
+
+        <div class="upload-section">
+            <div class="upload-options">
+                <label for="fileInput" class="upload-label">
+                    <div class="upload-box">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p>Single DICOM File</p>
+                        <span class="file-types">Upload one .dcm file</span>
+                    </div>
+                </label>
+                <input type="file" id="fileInput" accept=".dcm" style="display: none;">
+                
+                <label for="folderInput" class="upload-label">
+                    <div class="upload-box">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                            <polyline points="17 11 12 16 7 11"></polyline>
+                        </svg>
+                        <p>Study Directory</p>
+                        <span class="file-types">Upload folder with series</span>
+                    </div>
+                </label>
+                <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;">
+            </div>
+        </div>
+
+        <div id="seriesInfo" class="series-info" style="display: none;">
+            <h3>Study Information</h3>
+            <div id="studyData"></div>
+            <div class="series-selector">
+                <label>Series: 
+                    <select id="seriesSelect"></select>
+                </label>
+                <span id="seriesDescription"></span>
+            </div>
+        </div>
+
+        <div id="imageInfo" class="image-info" style="display: none;">
+            <h3>Current Slice Information</h3>
+            <div id="metaData"></div>
+        </div>
+
+        <div class="viewer-section">
+            <div id="dicomImage" class="dicom-canvas">
+                <div id="coordinateOverlay" class="coordinate-overlay" style="display: none;">
+                    <div class="coord-info">
+                        <span id="pixelCoords">Pixel: (0, 0)</span>
+                        <span id="realCoords">Position: (0.0, 0.0) mm</span>
+                    </div>
+                </div>
+                <div id="measurementOverlay" class="measurement-overlay"></div>
+            </div>
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Loading DICOM file...</p>
+            </div>
+        </div>
+
+        <div class="controls" id="controls" style="display: none;">
+            <div class="measurement-tools">
+                <button id="measureBtn" class="control-btn tool-btn">
+                    <span>📏 Measure Distance</span>
+                </button>
+                <button id="clearMeasureBtn" class="control-btn tool-btn" style="display: none;">
+                    <span>🗑️ Clear Measurements</span>
+                </button>
+                <button id="exportBtn" class="control-btn tool-btn">
+                    <span>💾 Export PNG</span>
+                </button>
+                <div id="measurementResult" class="measurement-result" style="display: none;"></div>
+            </div>
+            <div class="slice-navigation" id="sliceNav" style="display: none;">
+                <button id="firstSlice" class="control-btn">⏮ First</button>
+                <button id="prevSlice" class="control-btn">◀ Previous</button>
+                <span id="sliceInfo" class="slice-info">Slice 1 / 1</span>
+                <button id="nextSlice" class="control-btn">Next ▶</button>
+                <button id="lastSlice" class="control-btn">Last ⏭</button>
+            </div>
+            <div class="slice-slider" id="sliceSliderContainer" style="display: none;">
+                <div class="slider-wrapper">
+                    <span class="slider-label" id="sliderMin">1</span>
+                    <input type="range" id="sliceSlider" min="0" max="0" value="0" class="slider">
+                    <span class="slider-label" id="sliderMax">1</span>
+                </div>
+            </div>
+            <button id="resetBtn" class="control-btn">Reset View</button>
+            <div class="zoom-controls">
+                <button id="zoomIn" class="control-btn">Zoom In</button>
+                <button id="zoomOut" class="control-btn">Zoom Out</button>
+            </div>
+            <div class="window-controls">
+                <label>
+                    Brightness: <input type="range" id="brightness" min="-100" max="100" value="0">
+                </label>
+                <label>
+                    Contrast: <input type="range" id="contrast" min="-100" max="100" value="0">
+                </label>
+            </div>
+        </div>
+
+        <footer class="app-footer">
+            <p>Designed and developed with ❤️ and <strong>Copilot</strong></p>
+        </footer>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
