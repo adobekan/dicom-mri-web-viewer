@@ -6,7 +6,7 @@ A web-based application for viewing MRI scans from DICOM (.dcm) files. This appl
 
 ## Why?
 
-**TL;DR**: Wanted to have something simple for macOS.
+Wanted to have something simple for macOS.
 
 Finding a simple, open-source MRI viewer for Mac was harder than actually reading the MRI.
 
